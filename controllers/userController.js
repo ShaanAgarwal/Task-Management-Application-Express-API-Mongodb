@@ -1,5 +1,5 @@
-const LoginUser = require("../audit/loginUser");
-const RegisterUser = require("../audit/registerUser");
+const LoginUser = require("../audit/UserController/loginUser");
+const RegisterUser = require("../audit/UserController/registerUser");
 const User = require("../models/User");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
