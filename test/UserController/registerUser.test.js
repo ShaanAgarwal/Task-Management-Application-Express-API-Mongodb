@@ -63,6 +63,7 @@ describe('Register User Tests', () => {
         expect(response.status).toBe(409);
         expect(response.body.message).toBe('User already exists with the given email');
         expect(response.body.success).toBe(false);
+        await User.deleteMany({});
     });
 
     test('Successful user registration', async () => {
@@ -83,5 +84,25 @@ describe('Register User Tests', () => {
         expect(user.lastName).toBe('Agarwal');
         expect(user.email).toBe('shaan.agarwal@gmail.com');
         expect(user.password).not.toBe('Password');
+        await User.deleteMany({});
     });
+
+    test('Internal Server Error', async () => {
+        jest.spyOn(User.prototype, 'save').mockImplementation(() => {
+            throw new Error('Internal Server Error');
+        });
+        const response = await request(app)
+            .post('/api/user/register')
+            .send({
+                firstName: 'Shaan',
+                lastName: 'Agarwal',
+                email: 'shaanagarwalofficial@gmail.com',
+                password: 'Password'
+            });
+        expect(response.status).toBe(500);
+        expect(response.body.message).toBe('Internal Server Error');
+        expect(response.body.success).toBe(false);
+        User.prototype.save.mockRestore();
+    });
+
 });

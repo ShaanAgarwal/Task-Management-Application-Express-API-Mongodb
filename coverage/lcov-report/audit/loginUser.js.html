@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for models/User.js</title>
+    <title>Code coverage report for audit/loginUser.js</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,7 +19,7 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">models</a> User.js</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">audit</a> loginUser.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
@@ -117,31 +117,31 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span></td><td class="text"><pre class="prettyprint lang-js">const mongoose = require('mongoose');
 &nbsp;
-const userSchema = new mongoose.Schema({
-    firstName: {
-        type: String,
-        required: true
-    },
-    lastName: {
-        type: String,
-        required: true
-    },
+const loginUserSchema = new mongoose.Schema({
     email: {
         type: String,
-        required: true
+        default: 'Null'
     },
     password: {
         type: String,
+        default: 'Null'
+    },
+    time: {
+        type: Date,
         required: true
     },
-    profilePicture: {
+    response: {
         type: String,
-        default: "Empty"
+        required: true
+    },
+    success: {
+        type: Boolean,
+        required: true
     }
-}, { timestamps: true });
+});
 &nbsp;
-const User = new mongoose.model('User', userSchema);
-module.exports = User;</pre></td></tr></table></pre>
+const LoginUser = new mongoose.model('LoginUser', loginUserSchema);
+module.exports = LoginUser;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
