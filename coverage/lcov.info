@@ -1,5 +1,5 @@
 TN:
-SF:audit\loginUser.js
+SF:audit\UserController\loginUser.js
 FNF:0
 FNH:0
 DA:1,2
@@ -12,7 +12,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:audit\registerUser.js
+SF:audit\UserController\registerUser.js
 FNF:0
 FNH:0
 DA:1,2
