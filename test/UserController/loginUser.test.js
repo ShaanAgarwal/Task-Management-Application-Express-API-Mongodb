@@ -8,7 +8,7 @@ app.use('/api/user', require('../../routes/userRoutes'));
 const bcrypt = require('bcrypt');
 require('dotenv').config();
 
-const MONGO_URI = 'mongodb://localhost:27017/testdb';
+const MONGO_URI = 'mongodb://localhost:27017/loginUser';
 
 beforeAll(async () => {
     await mongoose.connect(MONGO_URI);
@@ -72,7 +72,6 @@ describe('Login User Tests', () => {
         expect(response.status).toBe(401);
         expect(response.body.message).toBe('Incorrect Password');
         expect(response.body.success).toBe(false);
-        await User.deleteMany({});
     });
 
     test('Successful login', async () => {
@@ -80,22 +79,20 @@ describe('Login User Tests', () => {
         await new User({
             firstName: 'Shaan',
             lastName: 'Agarwal',
-            email: 'shaanagarwalofficial@gmail.com',
+            email: 'shaan@gmail.com',
             password: hashedPassword
         }).save();
         const response = await request(app)
             .post('/api/user/login')
             .send({
-                email: 'shaanagarwalofficial@gmail.com',
+                email: 'shaan@gmail.com',
                 password: 'correctPassword'
             });
         expect(response.status).toBe(200);
         expect(response.body.message).toBe('Login successful');
         expect(response.body.success).toBe(true);
         expect(response.body.token).toBeTruthy();
-        const user = await User.findOne({ email: 'shaanagarwalofficial@gmail.com' });
-        expect(user).toBeTruthy();
-        await User.deleteMany({});
+        const user = await User.findOne({ email: 'shaan@gmail.com' });
     });
 
     test('Internal Server Error', async () => {

@@ -10,10 +10,6 @@ const createTask = async (req, res) => {
             await new CreateTask({ userId, name, description, priority, startTime, endTime, label, response: 'All fields are required', success: false }).save();
             return res.status(400).json({ message: "All fields are required", success: false });
         };
-        if (!userId) {
-            await new CreateTask({ name, description, priority, startTime, endTime, label, response: 'User id not present in the parameters', success: false }).save();
-            return res.status(400).json({ message: "User id is not present in the parameters", success: false });
-        };
         const user = await User.findById(userId);
         if (!user) {
             await new CreateTask({ userId, name, description, priority, startTime, endTime, label, response: 'User not found with given id', success: false }).save();

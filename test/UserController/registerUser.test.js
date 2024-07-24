@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 app.use('/api/user', require('../../routes/userRoutes'));
 
-const MONGO_URI = 'mongodb://localhost:27017/testdb';
+const MONGO_URI = 'mongodb://localhost:27017/registerUser';
 
 beforeAll(async () => {
     await mongoose.connect(MONGO_URI);
@@ -52,6 +52,7 @@ describe('Register User Tests', () => {
             email: 'shaanagarwalofficial@gmail.com',
             password: 'Password'
         }).save();
+        await new Promise(resolve => setTimeout(resolve, 1000));
         const response = await request(app)
             .post('/api/user/register')
             .send({
@@ -63,7 +64,6 @@ describe('Register User Tests', () => {
         expect(response.status).toBe(409);
         expect(response.body.message).toBe('User already exists with the given email');
         expect(response.body.success).toBe(false);
-        await User.deleteMany({});
     });
 
     test('Successful user registration', async () => {
@@ -72,36 +72,40 @@ describe('Register User Tests', () => {
             .send({
                 firstName: 'Shaan',
                 lastName: 'Agarwal',
-                email: 'shaan.agarwal@gmail.com',
+                email: 'shaanregister@gmail.com',
                 password: 'Password'
             });
+
         expect(response.status).toBe(201);
         expect(response.body.message).toBe('User has been created successfully');
         expect(response.body.success).toBe(true);
-        const user = await User.findOne({ email: 'shaan.agarwal@gmail.com' });
+
+        const user = await User.findOne({ email: 'shaanregister@gmail.com' });
         expect(user).toBeTruthy();
         expect(user.firstName).toBe('Shaan');
         expect(user.lastName).toBe('Agarwal');
-        expect(user.email).toBe('shaan.agarwal@gmail.com');
+        expect(user.email).toBe('shaanregister@gmail.com');
         expect(user.password).not.toBe('Password');
-        await User.deleteMany({});
     });
 
     test('Internal Server Error', async () => {
         jest.spyOn(User.prototype, 'save').mockImplementation(() => {
             throw new Error('Internal Server Error');
         });
+
         const response = await request(app)
             .post('/api/user/register')
             .send({
                 firstName: 'Shaan',
                 lastName: 'Agarwal',
-                email: 'shaanagarwalofficial@gmail.com',
+                email: 'shaaninternalservererror@gmail.com',
                 password: 'Password'
             });
+
         expect(response.status).toBe(500);
         expect(response.body.message).toBe('Internal Server Error');
         expect(response.body.success).toBe(false);
+
         User.prototype.save.mockRestore();
     });
 
