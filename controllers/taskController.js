@@ -1,4 +1,5 @@
 const CreateTask = require("../audit/TaskController/createTask");
+const GetAllTasksForUser = require("../audit/TaskController/getAllTasksForUser");
 const Task = require("../models/Task");
 const User = require("../models/User");
 
@@ -25,4 +26,21 @@ const createTask = async (req, res) => {
     };
 };
 
-module.exports = { createTask };
+const getAllTasksForUser = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const user = await User.findById(userId);
+        if (!user) {
+            await GetAllTasksForUser({userId, response: 'User not found with given id', success: false}).save();
+            return res.status(404).json({ message: "User not found with given id", success: false });
+        };
+        const tasks = await Task.find({ userId: userId });
+        await GetAllTasksForUser({userId, tasks, response: 'Successful in retrieving tasks for given user', success: true}).save();
+        return res.status(200).json({ message: "Successful in retrieving tasks for given user", success: true, tasks });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Internal Server Error", success: false });
+    }
+};
+
+module.exports = { createTask, getAllTasksForUser };
