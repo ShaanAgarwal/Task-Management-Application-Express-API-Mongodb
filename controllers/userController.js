@@ -1,3 +1,4 @@
+const GetAllUsers = require("../audit/UserController/getAllUsers");
 const LoginUser = require("../audit/UserController/loginUser");
 const RegisterUser = require("../audit/UserController/registerUser");
 const User = require("../models/User");
@@ -57,4 +58,15 @@ const loginUser = async (req, res) => {
     };
 };
 
-module.exports = { registerUser, loginUser };
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find();
+        await new GetAllUsers({users, response: 'Successful in fetching all users from database', success: true}).save();
+        return res.status(200).json({ message: "Successful in fetching all users from database", users, success: true });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Internal Server Error", success: false });
+    };
+};
+
+module.exports = { registerUser, loginUser, getAllUsers };
