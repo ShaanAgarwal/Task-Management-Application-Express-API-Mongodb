@@ -4,7 +4,9 @@ const cors = require('cors');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const connectDatabase = require('./config/db');
+
 const userRoutes = require('./routes/userRoutes');
+const taskRoutes = require('./routes/taskRoutes');
 
 dotenv.config();
 
@@ -19,6 +21,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use('/api/user', userRoutes);
+app.use('/api/task', taskRoutes);
 
 const port = process.env.PORT;
 
