@@ -1,4 +1,5 @@
 const GetAllUsers = require("../audit/UserController/getAllUsers");
+const GetSingleUserById = require("../audit/UserController/getSingleUserById");
 const LoginUser = require("../audit/UserController/loginUser");
 const RegisterUser = require("../audit/UserController/registerUser");
 const User = require("../models/User");
@@ -69,4 +70,20 @@ const getAllUsers = async (req, res) => {
     };
 };
 
-module.exports = { registerUser, loginUser, getAllUsers };
+const getSingleUserById = async (req,res) => {
+    try {
+        const userId = req.params.userId;
+        const user = await User.findById(userId);
+        if(!user) {
+            await new GetSingleUserById({response: 'User with given id does not exist', success: false}).save();
+            return res.status(404).json({message: 'User with given id does not exist', success: false});
+        };
+        await new GetSingleUserById({user, response: 'Successful in retrieving user', success: true}).save();
+        return res.status(200).json({message: 'Successful in retrieving user', user, success: true});
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({message: 'Internal Server Error', success: false});
+    };
+};
+
+module.exports = { registerUser, loginUser, getAllUsers, getSingleUserById };
