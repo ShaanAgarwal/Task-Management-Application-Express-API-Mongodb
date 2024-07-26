@@ -1,5 +1,6 @@
 const CreateTask = require("../audit/TaskController/createTask");
 const GetAllTasksForUser = require("../audit/TaskController/getAllTasksForUser");
+const UpdateTaskForUser = require("../audit/TaskController/updateTaskForUser");
 const Task = require("../models/Task");
 const User = require("../models/User");
 
@@ -31,11 +32,11 @@ const getAllTasksForUser = async (req, res) => {
         const userId = req.params.userId;
         const user = await User.findById(userId);
         if (!user) {
-            await GetAllTasksForUser({ userId, response: 'User not found with given id', success: false }).save();
+            await new GetAllTasksForUser({ userId, response: 'User not found with given id', success: false }).save();
             return res.status(404).json({ message: "User not found with given id", success: false });
         };
         const tasks = await Task.find({ userId: userId });
-        await GetAllTasksForUser({ userId, tasks, response: 'Successful in retrieving tasks for given user', success: true }).save();
+        await new GetAllTasksForUser({ userId, tasks, response: 'Successful in retrieving tasks for given user', success: true }).save();
         return res.status(200).json({ message: "Successful in retrieving tasks for given user", success: true, tasks });
     } catch (error) {
         console.log(error);
@@ -46,20 +47,72 @@ const getAllTasksForUser = async (req, res) => {
 const updateTaskForUser = async (req, res) => {
     try {
         const userId = req.params.userId;
+        const taskId = req.params.taskId;
         const { name, description, priority, startTime, endTime, label, status } = req.body;
         if (!name || !description || !priority || !startTime || !endTime || !label || !status) {
+            await new UpdateTaskForUser({
+                userId: userId,
+                taskId: taskId,
+                name: name,
+                description: description,
+                priority: priority,
+                startTime: startTime,
+                endTime: endTime,
+                label: label,
+                status: status,
+                response: 'All fields are required',
+                success: false
+            }).save();
             return res.status(404).json({ message: "All fields are required", success: false });
         };
         const user = await User.findById(userId);
         if (!user) {
+            await new UpdateTaskForUser({
+                userId: userId,
+                taskId: taskId,
+                name: name,
+                description: description,
+                priority: priority,
+                startTime: startTime,
+                endTime: endTime,
+                label: label,
+                status: status,
+                response: 'User not found with given id',
+                success: false
+            }).save();
             return res.status(404).json({ message: "User not found with given id", success: false });
         };
-        const taskId = req.params.taskId;
         const task = await Task.findById(taskId);
         if (!task) {
+            await new UpdateTaskForUser({
+                userId: userId,
+                taskId: taskId,
+                name: name,
+                description: description,
+                priority: priority,
+                startTime: startTime,
+                endTime: endTime,
+                label: label,
+                status: status,
+                response: 'Task not found with given id',
+                success: false
+            }).save();
             return res.status(404).json({ message: "Task not found with given id", success: false });
         };
         if (task.userId != userId) {
+            await new UpdateTaskForUser({
+                userId: userId,
+                taskId: taskId,
+                name: name,
+                description: description,
+                priority: priority,
+                startTime: startTime,
+                endTime: endTime,
+                label: label,
+                status: status,
+                response: 'You are not authorized to access this task',
+                success: false
+            }).save();
             return res.status(401).json({ message: "You are not authorized to access this task", success: false });
         };
         const updatedTask = await Task.findByIdAndUpdate(taskId, {
@@ -71,6 +124,19 @@ const updateTaskForUser = async (req, res) => {
             label: label,
             status: status
         });
+        await new UpdateTaskForUser({
+            userId: userId,
+            taskId: taskId,
+            name: name,
+            description: description,
+            priority: priority,
+            startTime: startTime,
+            endTime: endTime,
+            label: label,
+            status: status,
+            response: 'Task has been updated successfully',
+            success: false
+        }).save();
         return res.status(200).json({ message: "Task has been updated successfully", success: true });
     } catch (error) {
         console.log(error);
